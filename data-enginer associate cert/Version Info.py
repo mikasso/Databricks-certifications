@@ -67,6 +67,8 @@
 # MAGIC
 # MAGIC Databricks Academy provides custom libraries to facilitate the development of its courseware. Your cluster requires access to these remotely hosted libraries so that they can be installed into your cluster.
 # MAGIC
+# MAGIC If the optional `dbacademy.library.version` or `dbacademy.library.install` Spark configuration is unavailable, setup warns and uses the pinned library version or default installation command. Overrides cannot be read in that case. This fallback does not ensure the library installation or the rest of the course setup will work; see the repository README for supported compute and limitations.
+# MAGIC
 # MAGIC Various companies restrict access to external sites to limit data exfiltration and address other security concerns, such as leaking potentially sensitive or proprietary information.
 # MAGIC
 # MAGIC For more current information, please see <a href="https://files.training.databricks.com/static/troubleshooting.html#cannot-install-libraries" target="_blank">Troubleshooting Library Installation</a>

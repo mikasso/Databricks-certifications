@@ -1,4 +1,15 @@
 # Databricks notebook source
+from pyspark.errors import PySparkException
+
+def __library_config(key, default):
+    try:
+        return spark.conf.get(key, default)
+    except PySparkException as e:
+        if e.getErrorClass() != "CONFIG_NOT_AVAILABLE.WITHOUT_SUGGESTION":
+            raise
+        print(f"WARNING: Spark configuration {key} is unavailable; using the default library setting.")
+        return default
+
 def __validate_libraries():
     import requests
     try:
@@ -16,7 +27,7 @@ def __install_libraries():
     
     specified_version = f"v3.0.42"
     key = "dbacademy.library.version"
-    version = spark.conf.get(key, specified_version)
+    version = __library_config(key, specified_version)
 
     if specified_version != version:
         print("** Dependency Version Overridden *******************************************************************")
@@ -41,7 +52,7 @@ def __install_libraries():
         else: library_url = f"https://github.com/databricks-academy/dbacademy/releases/download/{version}/dbacademy-{version[1:]}-py3-none-any.whl"
 
         default_command = f"install --quiet --disable-pip-version-check {library_url}"
-        pip_command = spark.conf.get("dbacademy.library.install", default_command)
+        pip_command = __library_config("dbacademy.library.install", default_command)
 
         if pip_command != default_command:
             print(f"WARNING: Using alternative library installation:\n| default: %pip {default_command}\n| current: %pip {pip_command}")
