@@ -51,7 +51,7 @@ dbutils.widgets.text(WorkspaceHelper.PARAM_LAB_ID, "", "Lab/Class ID (optional)"
 dbutils.widgets.text(WorkspaceHelper.PARAM_DESCRIPTION, "", "Description (optional)")
 
 # The default spark version
-dbutils.widgets.text(WorkspaceHelper.PARAM_SPARK_VERSION, "13.3.x-cpu-ml-scala2.12", "Spark Version (optional)")
+dbutils.widgets.text(WorkspaceHelper.PARAM_SPARK_VERSION, "15.4.x-cpu-ml-scala2.12", "Spark Version (optional)")
 
 # COMMAND ----------
 

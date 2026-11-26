@@ -2,32 +2,28 @@
 
 This repository contains Databricks Academy Data Engineering notebooks and
 solutions, originally built in 2023 for Databricks Runtime (DBR) 11.3. This
-copy targets DBR 13.3 LTS; its changes have only been checked statically and
+copy targets DBR 15.4 LTS; its changes have only been checked statically and
 have **not** been run or certified on a Databricks workspace. Course content
 has not been updated against the current certification exam.
 
 ## Runtime and compute
 
-DBR 13.3 LTS reached end of support on August 22, 2026. Databricks removes
-end-of-support runtimes from the compute UI; until end of life they may still
-be usable through the [cluster creation API](https://docs.databricks.com/api/workspace/clusters/create),
-subject to workspace policies, cloud availability and permissions. See the
-[end-of-support history](https://docs.databricks.com/aws/en/release-notes/runtime/eos)
-and consider a [currently supported runtime](https://docs.databricks.com/aws/en/release-notes/runtime/)
-for other work.
+DBR 15.4 LTS is supported until August 19, 2027. See the
+[supported runtime versions](https://docs.databricks.com/aws/en/release-notes/runtime/)
+for the current lifecycle.
 
 The shared course setup accepts these runtime keys:
 
-- `13.3.x-scala2.12`
-- `13.3.x-photon-scala2.12`
-- `13.3.x-cpu-ml-scala2.12`
+- `15.4.x-scala2.12`
+- `15.4.x-cpu-ml-scala2.12`
 
 Availability and behavior of each variant are unverified. `Includes/Workspace-Setup`
 defaults to the CPU ML key, and its widget can select another course runtime.
-Set the `spark_version` field when creating compute via the API, using a valid
-cluster configuration and any policy required by your workspace. SQL warehouses
-and Delta Live Tables (DLT) pipelines use separately managed compute or pipeline
-channels; selecting DBR 13.3 for a notebook does not pin their runtime.
+Check the keys available in your workspace and any applicable compute policy.
+Photon is an independently configured runtime engine; its behavior with the
+course's runtime check has not been verified. SQL warehouses and Delta Live
+Tables (DLT) pipelines use separately managed compute or pipeline channels;
+selecting DBR 15.4 for a notebook does not pin their runtime.
 
 ## Getting started
 
@@ -47,7 +43,7 @@ channels; selecting DBR 13.3 for a notebook does not pin their runtime.
    ```
 
    Run `dbutils.library.restartPython()` in the next cell before running the
-   lesson. Restarting clears Python state. DBR 13.3 does not automatically
+   lesson. Restarting clears Python state. DBR 15.4 does not automatically
    restart Python after `%pip`; see the
    [library documentation](https://docs.databricks.com/aws/en/libraries/notebooks-python-libraries).
    Do not restart after running the lesson setup, since it creates Python state
@@ -60,7 +56,7 @@ channels; selecting DBR 13.3 for a notebook does not pin their runtime.
 
 The pinned Academy library is retained because the newer v5.0.11 changes APIs
 used by these notebooks. Neither library version has been validated here on
-DBR 13.3.
+DBR 15.4.
 
 ## Workspace requirements and limitations
 
@@ -80,16 +76,50 @@ DBR 13.3.
 - DBR 13.3 changes Delta `UPDATE`/`MERGE` implicit casts and Parquet timestamp
   inference. Data-dependent exercises may need attention; see the
   [13.3 release notes](https://docs.databricks.com/aws/en/release-notes/runtime/13.3lts).
+- DBR 15.4 changes view schema binding and JDBC timestamp calendar defaults;
+  review affected exercises against the
+  [15.4 release notes](https://docs.databricks.com/aws/en/release-notes/runtime/15.4lts).
 - The learner notebook `DE 4.99 - Land New Data` contains a pre-existing
   optional cell with uncommented prose that is not valid Python. Its solution
   notebook does not have that syntax issue.
 
-## Suggested workspace smoke test
+## Read-only workspace checks
 
-When an appropriate workspace is available, first verify compute creation and
-the pinned wheel, then run one learner and one solution setup and check dataset
-access. Exercise representative PySpark, SQL and Delta labs, followed by
-streaming, jobs, DLT, SQL warehouse and Unity Catalog lessons where their
-prerequisites are available. Confirm results and cleanup in an isolated
-workspace before relying on the course. None of these steps has been executed
-as part of this migration.
+On an existing 15.4 cluster, run these cells in a fresh Python notebook. They do
+not invoke course setup, install packages, create tables or modify datasets:
+
+```python
+import importlib.util
+import sys
+from importlib.metadata import version
+
+print("Python:", sys.version)
+print("Spark:", spark.version)
+print("Runtime key:", spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion", "unavailable"))
+print("Academy installed:", importlib.util.find_spec("dbacademy") is not None)
+if importlib.util.find_spec("dbacademy") is not None:
+    print("Academy version:", version("dbacademy"))
+    from dbacademy import dbgems
+    from dbacademy.dbhelper import DBAcademyHelper, Paths, CourseConfig, LessonConfig
+    print("Academy imports succeeded")
+```
+
+```python
+import pandas as pd
+from pyspark.sql.functions import pandas_udf
+
+@pandas_udf("string")
+def first_letter(value: pd.Series) -> pd.Series:
+    return value.str[0]
+
+rows = spark.createDataFrame([("abc",), ("xyz",)], ["value"])
+assert [row[0] for row in rows.select(first_letter("value")).collect()] == ["a", "x"]
+assert spark.sql("SELECT element_at(array(1, 2), 1)").first()[0] == 1
+print("Read-only Spark and Pandas UDF checks passed")
+```
+
+Share results and any errors after removing sensitive workspace information.
+These probes do not validate installing the wheel, course setup, datasets,
+learner or solution labs, Unity Catalog, jobs, DLT, SQL warehouses or write
+operations. Those workflows remain unverified and can create or change
+resources; review them with an administrator before running them.

@@ -30,7 +30,7 @@
 # MAGIC
 # MAGIC
 # MAGIC #### Technical Considerations
-# MAGIC * This copy targets DBR 13.3 LTS, but has not been tested on a Databricks workspace.
+# MAGIC * This copy targets DBR 15.4 LTS, but has not been tested on a Databricks workspace.
 # MAGIC * This course cannot be delivered on Databricks Community Edition.
 
 # COMMAND ----------
