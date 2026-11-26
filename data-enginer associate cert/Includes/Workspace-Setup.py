@@ -51,7 +51,7 @@ dbutils.widgets.text(WorkspaceHelper.PARAM_LAB_ID, "", "Lab/Class ID (optional)"
 dbutils.widgets.text(WorkspaceHelper.PARAM_DESCRIPTION, "", "Description (optional)")
 
 # The default spark version
-dbutils.widgets.text(WorkspaceHelper.PARAM_SPARK_VERSION, "11.3.x-cpu-ml-scala2.12", "Spark Version (optional)")
+dbutils.widgets.text(WorkspaceHelper.PARAM_SPARK_VERSION, "13.3.x-cpu-ml-scala2.12", "Spark Version (optional)")
 
 # COMMAND ----------
 
@@ -173,7 +173,7 @@ from dbacademy.dbhelper.databases_helper_class import DatabasesHelper
 
 # Ensures that all users can create databases on the current catalog 
 # for cases wherein the user/student is not an admin.
-job_id = DatabasesHelper.configure_permissions(DA.client, "Configure-Permissions", "10.4.x-scala2.12")
+job_id = DatabasesHelper.configure_permissions(DA.client, "Configure-Permissions", spark_version)
 
 # COMMAND ----------
 

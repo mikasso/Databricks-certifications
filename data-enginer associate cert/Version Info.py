@@ -43,7 +43,7 @@
 # MAGIC
 # MAGIC To ensure that all labs execute as expected, Databricks Academy requires that the content provided be executed against a cluster configured with a specific runtime. Typically this is an LTS (long-term supported) version.
 # MAGIC
-# MAGIC This course is tested against and requires one of the following DBRs (Databricks Runtime): **11.3.x-scala2.12, 11.3.x-photon-scala2.12, 11.3.x-cpu-ml-scala2.12**.
+# MAGIC This copy targets **DBR 13.3 LTS** (`13.3.x-scala2.12`, `13.3.x-photon-scala2.12`, or `13.3.x-cpu-ml-scala2.12`), but has not been tested on a Databricks workspace. DBR 13.3 reached end of support on August 22, 2026; see the repository README for prerequisites and limitations.
 # MAGIC
 # MAGIC For more current information, please <a href="https://files.training.databricks.com/static/troubleshooting.html#spark-version" target="_blank">Troubleshooting the Spark Version</a>
 
